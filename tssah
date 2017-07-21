@@ -21,6 +21,9 @@ def ensure_home():
 
 def show_usage():
     global SERVERS
+    print("")
+    print("")
+    print("")
     print("USAGE:")
     print("        $ %s [SERVER-NAME]" % sys.argv[0])
     print("")
@@ -79,14 +82,28 @@ def main():
 
     SERVER_TXT = os.path.join(HOME, "servers.txt")
 
+    # check for existance
+    BIN = "/usr/local/bin/tssah"
+    if not os.path.exists(BIN):
+        print("Installing...")
+        os.system("wget https://raw.githubusercontent.com/anvie/tssah/master/tssah -O " + BIN)
+        os.system("chmod +x /usr/local/bin/tssah")
+        print("Done.")
+
     if os.path.exists(SERVER_TXT):
+        def to_js(a):
+            if len(a) == 4:
+                return {"name": a[0], "host": a[1], "port": a[2], "user_name": a[3]}
+            else:
+                return {"name": a[0], "host": a[1], "port": a[2], "user_name": ""}
+
         with open(SERVER_TXT, "r") as f:
             _servers = f.readlines()
             _servers = filter(lambda a: not a.startswith("#"), _servers)
             _servers = map(lambda a: a.strip(), _servers)
             _servers = filter(lambda x: len(x) > 5, _servers)
             _servers_s = map(lambda a: re.split("\\s+", a), _servers)
-            SERVERS = map(lambda a: {"name": a[0], "host": a[1], "port": a[2]}, _servers_s)
+            SERVERS = map(to_js, _servers_s)
 
 
     else:
@@ -114,7 +131,12 @@ def main():
         sv = (a for a in SERVERS if a["name"].lower() == name.lower()).next()
         print("Connecting %s..." % sv["name"])
 
-        target = "%s@%s" % (USER, sv["host"])
+        _user = USER
+        if len(sv["user_name"].strip()) > 0:
+            _user = sv["user_name"]
+
+        target = "%s@%s" % (_user, sv["host"])
+        print("target: " + target)
         # subprocess.Popen(["ssh", target, "-p %s" % sv["port"]])
         os.system("ssh %s -p %s" % (target, sv["port"]))
 

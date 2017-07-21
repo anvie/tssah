@@ -11,10 +11,10 @@ Installation
     $ curl https://raw.githubusercontent.com/anvie/tssah/master/tssah -sSf | python
 
 
-Edit `~/.tssah/servers.txt` and add your own servers with this format: [NAME] [IP-OR-HOST-NAME] [PORT] [USER-NAME]
+Edit `~/.tssah/servers.txt` and add your own servers with this format: `[NAME] [IP-OR-HOST-NAME] [PORT] [USER-NAME]`
 Eg:
 
-alpha1 123.11.22.33 22
+    alpha1 123.11.22.33 22
 
 USER-NAME is optional, if not set Tssah will use user name taken from TSSAH_USER environment variable, otherwise Tssah will
 get from USER environment variable.

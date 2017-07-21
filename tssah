@@ -137,7 +137,6 @@ def main():
 
         target = "%s@%s" % (_user, sv["host"])
         print("target: " + target)
-        # subprocess.Popen(["ssh", target, "-p %s" % sv["port"]])
         os.system("ssh %s -p %s" % (target, sv["port"]))
 
     except StopIteration:

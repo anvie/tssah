@@ -1,0 +1,129 @@
+#!/usr/bin/env python
+# Tssah just SSH easy connector utility
+#
+
+import sys
+import os
+import re
+import subprocess
+
+from os.path import expanduser
+
+HOME = os.path.join(expanduser("~"), ".tssah")
+USER = os.environ.get("TSSAH_USER", "")
+if len(USER.strip()) == 0:
+    USER = os.environ["USER"]
+SERVERS = []
+
+def ensure_home():
+    if not os.path.isdir(HOME):
+        os.makedirs(HOME)
+
+def show_usage():
+    global SERVERS
+    print("USAGE:")
+    print("        $ %s [SERVER-NAME]" % sys.argv[0])
+    print("")
+    print("Example:")
+    print("        $ %s alpha1" % sys.argv[0])
+    print("")
+    print("To listing all registered servers and it data, just run it with param `--ls`, eg:\n")
+    print("        $ %s --ls" % sys.argv[0])
+    print("")
+    print("REGISTERED SERVERS:\n")
+    _server_names = map(lambda a: a["name"], SERVERS)
+    print_sorted_list(_server_names, columns=3, ljust=20)
+    print("\n")
+
+
+def print_sorted_list(data, rows=0, columns=0, ljust=10):
+    """
+    Prints sorted item of the list data structure formated using
+    the rows and columns parameters
+    This function taken from: https://stackoverflow.com/a/33464001
+    """
+
+    if not data:
+        return
+
+    if rows:
+        # column-wise sorting
+        # we must know the number of rows to print on each column
+        # before we print the next column. But since we cannot
+        # move the cursor backwards (unless using ncurses library)
+        # we have to know what each row with look like upfront
+        # so we are basically printing the rows line by line instead
+        # of printing column by column
+        lines = {}
+        for count, item in enumerate(sorted(data)):
+            lines.setdefault(count % rows, []).append(item)
+        for key, value in sorted(lines.items()):
+            for item in value:
+                print item.ljust(ljust),
+            print
+    elif columns:
+        # row-wise sorting
+        # we just need to know how many columns should a row have
+        # before we print the next row on the next line.
+        for count, item in enumerate(sorted(data), 1):
+            print item.ljust(ljust),
+            if count % columns == 0:
+                print
+    else:
+        print sorted(data)  # the default print behaviour
+
+
+def main():
+    global SERVERS
+    ensure_home()
+
+    SERVER_TXT = os.path.join(HOME, "servers.txt")
+
+    if os.path.exists(SERVER_TXT):
+        with open(SERVER_TXT, "r") as f:
+            _servers = f.readlines()
+            _servers = filter(lambda a: not a.startswith("#"), _servers)
+            _servers = map(lambda a: a.strip(), _servers)
+            _servers = filter(lambda x: len(x) > 5, _servers)
+            _servers_s = map(lambda a: re.split("\\s+", a), _servers)
+            SERVERS = map(lambda a: {"name": a[0], "host": a[1], "port": a[2]}, _servers_s)
+
+
+    else:
+        with open(SERVER_TXT, "w") as f:
+            f.write("# Add your servers here\n")
+            f.write("# Using this format: [NAME] [IP-OR-HOST-NAME] [PORT]\n")
+            f.write("# Eg:\n")
+            f.write("# alpha1 123.11.22.33\n")
+
+    if len(sys.argv) < 2:
+        show_usage()
+        return 2
+
+    if sys.argv[1].startswith("--"):
+        print("\nSERVERS:\n")
+        if sys.argv[1] == "--ls":
+            for sv in SERVERS:
+                print("  - %s host=%s port=%s" % (sv["name"], sv["host"], sv["port"]))
+        print("")
+        return 0
+
+    name = sys.argv[1]
+
+    try:
+        sv = (a for a in SERVERS if a["name"].lower() == name.lower()).next()
+        print("Connecting %s..." % sv["name"])
+
+        target = "%s@%s" % (USER, sv["host"])
+        # subprocess.Popen(["ssh", target, "-p %s" % sv["port"]])
+        os.system("ssh %s -p %s" % (target, sv["port"]))
+
+    except StopIteration:
+        print("No server with name %s" % name)
+        return 1
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

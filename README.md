@@ -1,7 +1,7 @@
 TO SSH AH (TSSAH)
 ====================
 
-don't ask the motivation behind the naming.
+don't ask me the motivation behind the naming.
 
 This is tiny utility to help terminal users organize and help connecting their servers through SSH.
 

@@ -21,17 +21,21 @@ def ensure_home():
 
 def show_usage():
     global SERVERS
+    cmd_name = sys.argv[0]
+    s = cmd_name.split("/")
+    if len(s) > 1:
+        cmd_name = s[-1]
     print("")
     print("")
     print("")
     print("USAGE:")
-    print("        $ %s [SERVER-NAME]" % sys.argv[0])
+    print("        $ %s [SERVER-NAME]" % cmd_name)
     print("")
     print("Example:")
-    print("        $ %s alpha1" % sys.argv[0])
+    print("        $ %s alpha1" % cmd_name)
     print("")
     print("To listing all registered servers and it data, just run it with param `--ls`, eg:\n")
-    print("        $ %s --ls" % sys.argv[0])
+    print("        $ %s --ls" % cmd_name)
     print("")
     print("REGISTERED SERVERS:\n")
     _server_names = map(lambda a: a["name"], SERVERS)
@@ -109,9 +113,9 @@ def main():
     else:
         with open(SERVER_TXT, "w") as f:
             f.write("# Add your servers here\n")
-            f.write("# Using this format: [NAME] [IP-OR-HOST-NAME] [PORT]\n")
+            f.write("# Using this format: [NAME] [IP-OR-HOST-NAME] [PORT] [USER]\n")
             f.write("# Eg:\n")
-            f.write("# alpha1 123.11.22.33\n")
+            f.write("# alpha1 123.11.22.33 771 root\n")
 
     if len(sys.argv) < 2:
         show_usage()
@@ -121,7 +125,10 @@ def main():
         print("\nSERVERS:\n")
         if sys.argv[1] == "--ls":
             for sv in SERVERS:
-                print("  - %s host=%s port=%s" % (sv["name"], sv["host"], sv["port"]))
+                user_name = USER
+                if len(sv["user_name"]) > 0:
+                    user_name = sv["user_name"]
+                print("  - %s host=%s port=%s user=%s" % (sv["name"], sv["host"], sv["port"], user_name))
         print("")
         return 0
 

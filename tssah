@@ -79,6 +79,23 @@ def print_sorted_list(data, rows=0, columns=0, ljust=10):
     else:
         print sorted(data)  # the default print behaviour
 
+def read_server_file(server_file):
+    def to_js(a):
+        if len(a) == 4:
+            return {"name": a[0], "host": a[1], "port": a[2], "user_name": a[3]}
+        else:
+            return {"name": a[0], "host": a[1], "port": a[2], "user_name": ""}
+     
+    server_list = []
+    with open(server_file, "r") as f:
+        _servers = f.readlines()
+        _servers = filter(lambda a: not a.startswith("#"), _servers)
+        _servers = map(lambda a: a.strip(), _servers)
+        _servers = filter(lambda x: len(x) > 5, _servers)
+        _servers_s = map(lambda a: re.split("\\s+", a), _servers)
+        server_list = map(to_js, _servers_s)
+    
+    return server_list
 
 def main():
     global SERVERS
@@ -87,29 +104,22 @@ def main():
     SERVER_TXT = os.path.join(HOME, "servers.txt")
 
     # check for existance
+    # install automatically if the binary file not found
     BIN = "/usr/local/bin/tssah"
     if not os.path.exists(BIN):
         print("Installing...")
-        os.system("wget https://raw.githubusercontent.com/anvie/tssah/master/tssah -O " + BIN)
-        os.system("chmod +x /usr/local/bin/tssah")
+        
+        sudo_cmd = ""
+        if not os.access(os.path.dirname(BIN), os.W_OK | os. X_OK):
+            print("Need write permission to install tssah. Sudo command is needed...")
+            sudo_cmd = "sudo " 
+
+        os.system(sudo_cmd + "wget https://raw.githubusercontent.com/anvie/tssah/master/tssah -O " + BIN)
+        os.system(sudo_cmd + "chmod +x " + BIN)
         print("Done.")
 
     if os.path.exists(SERVER_TXT):
-        def to_js(a):
-            if len(a) == 4:
-                return {"name": a[0], "host": a[1], "port": a[2], "user_name": a[3]}
-            else:
-                return {"name": a[0], "host": a[1], "port": a[2], "user_name": ""}
-
-        with open(SERVER_TXT, "r") as f:
-            _servers = f.readlines()
-            _servers = filter(lambda a: not a.startswith("#"), _servers)
-            _servers = map(lambda a: a.strip(), _servers)
-            _servers = filter(lambda x: len(x) > 5, _servers)
-            _servers_s = map(lambda a: re.split("\\s+", a), _servers)
-            SERVERS = map(to_js, _servers_s)
-
-
+        SERVERS = read_server_file(SERVER_TXT)        
     else:
         with open(SERVER_TXT, "w") as f:
             f.write("# Add your servers here\n")

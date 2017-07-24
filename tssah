@@ -87,11 +87,12 @@ def main():
     SERVER_TXT = os.path.join(HOME, "servers.txt")
 
     # check for existance
+    # install automatically if the binary file not found
     BIN = "/usr/local/bin/tssah"
     if not os.path.exists(BIN):
         print("Installing...")
-        os.system("wget https://raw.githubusercontent.com/anvie/tssah/master/tssah -O " + BIN)
-        os.system("chmod +x /usr/local/bin/tssah")
+        os.system("sudo wget https://raw.githubusercontent.com/anvie/tssah/master/tssah -O " + BIN)
+        os.system("sudo chmod +x /usr/local/bin/tssah")
         print("Done.")
 
     if os.path.exists(SERVER_TXT):

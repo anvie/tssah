@@ -108,8 +108,14 @@ def main():
     BIN = "/usr/local/bin/tssah"
     if not os.path.exists(BIN):
         print("Installing...")
-        os.system("sudo wget https://raw.githubusercontent.com/anvie/tssah/master/tssah -O " + BIN)
-        os.system("sudo chmod +x /usr/local/bin/tssah")
+        
+        sudo_cmd = ""
+        if not os.access(os.path.dirname(BIN), os.W_OK | os. X_OK):
+            print("Need write permission to install tssah. Sudo command is needed...")
+            sudo_cmd = "sudo " 
+
+        os.system(sudo_cmd + "wget https://raw.githubusercontent.com/anvie/tssah/master/tssah -O " + BIN)
+        os.system(sudo_cmd + "chmod +x " + BIN)
         print("Done.")
 
     if os.path.exists(SERVER_TXT):

@@ -85,7 +85,7 @@ def read_server_file(server_file):
             return {"name": a[0], "host": a[1], "port": a[2], "user_name": a[3]}
         else:
             return {"name": a[0], "host": a[1], "port": a[2], "user_name": ""}
-     
+
     server_list = []
     with open(server_file, "r") as f:
         _servers = f.readlines()
@@ -94,7 +94,7 @@ def read_server_file(server_file):
         _servers = filter(lambda x: len(x) > 5, _servers)
         _servers_s = map(lambda a: re.split("\\s+", a), _servers)
         server_list = map(to_js, _servers_s)
-    
+
     return server_list
 
 def main():
@@ -108,18 +108,18 @@ def main():
     BIN = "/usr/local/bin/tssah"
     if not os.path.exists(BIN):
         print("Installing...")
-        
+
         sudo_cmd = ""
         if not os.access(os.path.dirname(BIN), os.W_OK | os. X_OK):
             print("Need write permission to install tssah. Sudo command is needed...")
-            sudo_cmd = "sudo " 
+            sudo_cmd = "sudo "
 
         os.system(sudo_cmd + "wget https://raw.githubusercontent.com/anvie/tssah/master/tssah -O " + BIN)
         os.system(sudo_cmd + "chmod +x " + BIN)
         print("Done.")
 
     if os.path.exists(SERVER_TXT):
-        SERVERS = read_server_file(SERVER_TXT)        
+        SERVERS = read_server_file(SERVER_TXT)
     else:
         with open(SERVER_TXT, "w") as f:
             f.write("# Add your servers here\n")
@@ -132,13 +132,15 @@ def main():
         return 2
 
     if sys.argv[1].startswith("--"):
-        print("\nSERVERS:\n")
         if sys.argv[1] == "--ls":
+            print("\nSERVERS:\n")
             for sv in SERVERS:
                 user_name = USER
                 if len(sv["user_name"]) > 0:
                     user_name = sv["user_name"]
                 print("  - %s host=%s port=%s user=%s" % (sv["name"], sv["host"], sv["port"], user_name))
+        else:
+            print("Unknown opt: " + sys.argv[1])
         print("")
         return 0
 

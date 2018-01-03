@@ -7,6 +7,12 @@ import os
 import re
 import subprocess
 
+# Compatibility between python 2 and 3 input
+try:
+    input = raw_input
+except NameError:
+    pass
+
 from os.path import expanduser
 
 HOME = os.path.join(expanduser("~"), ".tssah")
@@ -37,11 +43,19 @@ def show_usage():
     print("To listing all registered servers and it data, just run it with param `--ls`, eg:\n")
     print("        $ %s --ls" % cmd_name)
     print("")
+    print("To add new server, just run it with param `--add [SERVER-NAME]`, eg:\n")
+    print("        $ %s --add alpha1" % cmd_name)
+    print("")
     print("REGISTERED SERVERS:\n")
     _server_names = map(lambda a: a["name"], SERVERS)
     print_sorted_list(_server_names, columns=3, ljust=20)
     print("\n")
 
+def server_name_exists(server_name, server_list):
+    for server in server_list:
+        if server_name.lower() == server["name"].lower():
+            return True
+    return False
 
 def print_sorted_list(data, rows=0, columns=0, ljust=10):
     """
@@ -139,6 +153,54 @@ def main():
                 if len(sv["user_name"]) > 0:
                     user_name = sv["user_name"]
                 print("  - %s host=%s port=%s user=%s" % (sv["name"], sv["host"], sv["port"], user_name))
+        elif sys.argv[1] == "--add":
+            if len(sys.argv) > 2:
+                server_name = sys.argv[2]
+            else:
+                server_name = input("server name> ")
+            server_name = server_name.strip()
+            server_name = "-".join(server_name.split(" "))
+            # Check if server name exists
+            while True:
+                if not server_name_exists(server_name, SERVERS):
+                    break
+                p = input("server_name is used by other server. Use another name? [Y/n] ")
+                if p.strip() in ['y', 'Y']:
+                    server_name = input("server name> ")
+                    server_name = server_name.strip()
+                    server_name = "-".join(server_name.split(" "))
+                else:
+                    print("Add new server is canceled")
+                    return 0
+            while True:
+                host = input("host> ").strip()
+                if " " in host or host == "":
+                    print("Host cannot contain whitespace or empty")
+                    continue
+                break
+            port_format = re.compile('\d+')
+            while True:
+                port = input("port> ").strip()
+                if " " in port or port == "":
+                    print("Port cannot contain whitespace or empty")
+                    continue
+                elif not port_format.match(port):
+                    print("Port number should be a number")
+                    continue
+                break
+            while True:
+                username = input("username (optional)> ").strip()
+                if " " in username:
+                    print("Username cannot contain whitespace")
+                    continue
+                break
+            # Open file to append new server
+            with open(SERVER_TXT, 'a') as f:
+                f.write('\n')
+                f.write("# Added from command line\n")
+                f.write("%s %s %s %s\n" % (server_name, host, port, username))
+                print("The server is added to the list successfully")
+            return 0
         else:
             print("Unknown opt: " + sys.argv[1])
         print("")

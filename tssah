@@ -2,6 +2,7 @@
 # Tssah just SSH easy connector utility
 #
 
+from __future__ import print_function
 import sys
 import os
 import re
@@ -80,18 +81,18 @@ def print_sorted_list(data, rows=0, columns=0, ljust=10):
             lines.setdefault(count % rows, []).append(item)
         for key, value in sorted(lines.items()):
             for item in value:
-                print item.ljust(ljust),
-            print
+                print(item.ljust(ljust), end=' ')
+            print()
     elif columns:
         # row-wise sorting
         # we just need to know how many columns should a row have
         # before we print the next row on the next line.
         for count, item in enumerate(sorted(data), 1):
-            print item.ljust(ljust),
+            print(item.ljust(ljust), end=' ')
             if count % columns == 0:
-                print
+                print()
     else:
-        print sorted(data)  # the default print behaviour
+        print(sorted(data))  # the default print behaviour
 
 def read_server_file(server_file):
     def to_js(a):
@@ -209,7 +210,7 @@ def main():
     name = sys.argv[1]
 
     try:
-        sv = (a for a in SERVERS if a["name"].lower() == name.lower()).next()
+        sv = next((a for a in SERVERS if a["name"].lower() == name.lower()))
         print("Connecting %s..." % sv["name"])
 
         _user = USER

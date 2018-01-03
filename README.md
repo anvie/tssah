@@ -43,6 +43,10 @@ Example output:
 
             $ tssah --ls
 
+    To add new server, just run it with param `--add [SERVER-NAME]`, eg:
+
+            $tssah --add alpha1
+
     REGISTERED SERVERS:
 
     alpha1               alpha2

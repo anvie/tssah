@@ -3,7 +3,7 @@ TO SSH AH (TSSAH)
 
 A painless SSH switcher, no not like switch hub, this tool help sysadmin/devops to remember when switching and connect which SSH server and which param to use to connect through SSH.
 
-Features:
+Features
 -----------
 
 * Quick SSH connect. Every seconds matters, don't waste it.

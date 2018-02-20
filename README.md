@@ -25,7 +25,9 @@ Eg:
     name=alpha1 host=123.11.22.33 port=222 user=admin
 
 HOST is optional, if not set Tssah will use SERVER-NAME as host.
+
 PORT is optional, default is 22.
+
 LOGIN-NAME is optional, if not set Tssah will use user name taken from TSSAH_USER environment variable, otherwise Tssah will
 get from USER environment variable.
 

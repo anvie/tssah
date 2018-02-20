@@ -1,23 +1,44 @@
 TO SSH AH (TSSAH)
 ====================
 
-don't ask me the motivation behind the naming.
+A painless SSH switcher, no not like switch hub, this tool help sysadmin/devops to remember when switching and connect which SSH server and which param to use to connect through SSH.
 
-This is tiny utility to help terminal users organize and help connecting their servers through SSH.
+Features:
+-----------
+
+* Quick SSH connect. Every seconds matters, don't waste it.
+* SSH server inventory. Human brain is optimized for processing not for storage.
+* Grouping. Manage your multiple servers with ease by grouping it.
+* Ansible inventory like definition file format.
+
+Benefit: 5-15 seconds time saving when switching.
 
 Installation
 ---------------
 
-    $ curl https://raw.githubusercontent.com/anvie/tssah/master/tssah -sSf | python
+    $ curl https://raw.githubusercontent.com/anvie/tssah/master/tsh -sSf | python
 
 
-Edit `~/.tssah/servers.txt` and add your own servers with this format: `[NAME] [IP-OR-HOST-NAME] [PORT] [USER-NAME]`
+Edit `~/.tssah/servers.cfg` and add your own server definition with this format: `name=[SERVER-NAME] host=[HOST] port=[SSH-PORT] user=[LOGIN-NAME]`
 Eg:
 
-    alpha1 123.11.22.33 22
+    name=alpha1 host=123.11.22.33 port=222 user=admin
 
-USER-NAME is optional, if not set Tssah will use user name taken from TSSAH_USER environment variable, otherwise Tssah will
+HOST is optional, if not set Tssah will use SERVER-NAME as host.
+PORT is optional, default is 22.
+LOGIN-NAME is optional, if not set Tssah will use user name taken from TSSAH_USER environment variable, otherwise Tssah will
 get from USER environment variable.
+
+You can also just write like this:
+
+[staging]
+staging1.example.com
+staging2.example.com
+
+or like this:
+
+[staging]
+staging1.example.com host=192.168.1.10
 
 Setting default user name to access to server:
 
@@ -29,19 +50,19 @@ Usage
 
 To see usage, just run:
 
-    $ tssah
+    $ tsh
 
 Example output:
 
     USAGE:
-            $ tssah [SERVER-NAME]
+            $ tsh [SERVER-NAME]
 
     Example:
-            $ tssah alpha1
+            $ tsh alpha1
 
     To listing all registered servers and it data, just run it with param `--ls`, eg:
 
-            $ tssah --ls
+            $ tsh ls
 
     REGISTERED SERVERS:
 

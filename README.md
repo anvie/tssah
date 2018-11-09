@@ -62,7 +62,7 @@ Example output:
     Example:
             $ tsh alpha1
 
-    To listing all registered servers and it data, just run it with param `--ls`, eg:
+    To listing all registered servers and it data, just run it with param `ls`, eg:
 
             $ tsh ls
 

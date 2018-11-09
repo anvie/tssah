@@ -134,6 +134,8 @@ def read_server_file(server_file):
                                 svr["port"] = s.split("=")[1]
                             elif s.startswith("user="):
                                 svr["user_name"] = s.split("=")[1]
+                            elif s.startswith("key="):
+                                svr["key"] = s.split("=")[1]
                         if svr and not svr.has_key("name"):
                             svr["name"] = ss[0].strip()
                         if svr and not svr.has_key("host"):
@@ -145,6 +147,7 @@ def read_server_file(server_file):
                             if not svr.has_key("user_name"):
                                 svr["user_name"] = USER
                             server_list.append(svr)
+                        
 
                     elif len(ss) == 1 and len(ss[0]) > 1:
                         svr["name"] = ss[0]
@@ -276,7 +279,13 @@ def main():
 
         target = "%s@%s" % (_user, sv["host"])
         print("target: " + target)
-        os.system("ssh %s -p %s" % (target, sv["port"]))
+
+        add_opts = []
+        
+        if sv.has_key("key"):
+            add_opts.append("-i " + sv["key"])
+            
+        os.system("ssh %s %s -p %s" % (target, " ".join(add_opts).strip(), sv["port"]))
 
     except StopIteration:
         print("No server with name %s" % name)

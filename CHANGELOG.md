@@ -1,3 +1,6 @@
+v2.1.0
+
+* Added `ping` command to check whether servers is up or down using system ping command. 
 
 v2.0.0
 

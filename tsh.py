@@ -20,7 +20,7 @@ def ensure_home():
 
 def show_banner():
     print("")
-    print("TSSAH - v2.0.0")
+    print("TSSAH - v2.1.0")
     print("A painless ssh switcher")
     print("")
 
@@ -42,6 +42,10 @@ def show_usage(servers):
     print("Listing only for specific group, eg: webserver group:")
     print("")
     print("        $ %s ls webserver" % cmd_name)
+    print("")
+    print("To check all servers is up or down:")
+    print("")
+    print("        $ %s ping" % cmd_name)
     print("")
     print("REGISTERED SERVERS:\n")
     _server_names = map(lambda a: a["name"], servers)
@@ -83,7 +87,32 @@ def print_sorted_list(data, rows=0, columns=0, ljust=10):
             if count % columns == 0:
                 print
     else:
-        print sorted(data)  # the default print behaviour
+        print(sorted(data))  # the default print behaviour
+
+import platform
+import subprocess
+
+def ping(host):
+    param = '-n' if platform.system().lower()=='windows' else '-c'
+    FNULL = open(os.devnull, 'w')
+    command = ['ping', param, '1', host]
+    return subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT) == 0
+
+def ping_servers(servers):
+    up = 0
+    down = 0
+    for server in servers:
+        resp = ping(server["host"])
+        if resp:
+            print(" + %s (%s) is UP" % (server["name"], server["host"]))
+            up = up + 1
+        else:
+            print(" - %s (%s) is DOWN" % (server["name"], server["host"]))
+            down = down + 1
+
+    print("-----")
+    print("UP: %d, DOWN: %d" % (up, down))
+
 
 def read_server_file(server_file):
     global USER
@@ -222,6 +251,10 @@ def main():
 
     if sys.argv[1] == "--version":
         show_banner()
+        return 0
+
+    elif sys.argv[1] == "ping":
+        ping_servers(servers)
         return 0
 
     elif sys.argv[1] == "ls":

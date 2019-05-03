@@ -1,12 +1,12 @@
 TO SSH AH (TSSAH)
 ====================
 
-A painless SSH switcher, no not like switch hub, this tool help sysadmin/devops to remember when switching and connect which SSH server and which param to use to connect through SSH.
+Painless simple SSH inventory host management system.
 
 Features
 -----------
 
-* Quick SSH connect. Every seconds matters, don't waste it.
+* Quick SSH connect. Every seconds matters!
 * SSH server inventory. Human brain is optimized for processing not for storage.
 * Grouping. Manage your multiple servers with ease by grouping it.
 * Ansible inventory like definition file format.
@@ -66,6 +66,11 @@ Example output:
 
             $ tsh ls
 
+    To check all servers is up or down:
+
+            $ tsh ping
+
     REGISTERED SERVERS:
 
     alpha1               alpha2
+

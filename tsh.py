@@ -20,7 +20,7 @@ def ensure_home():
 
 def show_banner():
     print("")
-    print("TSSAH - v2.1.0")
+    print("TSSAH - v2.0.0")
     print("A painless ssh switcher")
     print("")
 
@@ -76,16 +76,16 @@ def print_sorted_list(data, rows=0, columns=0, ljust=10):
             lines.setdefault(count % rows, []).append(item)
         for key, value in sorted(lines.items()):
             for item in value:
-                print item.ljust(ljust),
-            print
+                print(item.ljust(ljust)),
+            print()
     elif columns:
         # row-wise sorting
         # we just need to know how many columns should a row have
         # before we print the next row on the next line.
         for count, item in enumerate(sorted(data), 1):
-            print item.ljust(ljust),
+            print(item.ljust(ljust)),
             if count % columns == 0:
-                print
+                print()
     else:
         print(sorted(data))  # the default print behaviour
 
@@ -165,15 +165,15 @@ def read_server_file(server_file):
                                 svr["user_name"] = s.split("=")[1]
                             elif s.startswith("key="):
                                 svr["key"] = s.split("=")[1]
-                        if svr and not svr.has_key("name"):
+                        if svr and "name" not in svr:
                             svr["name"] = ss[0].strip()
-                        if svr and not svr.has_key("host"):
+                        if svr and "host" not in svr:
                             # raise Exception("ERROR: server `%s` has no host" % svr["name"])
                             svr["host"] = svr["name"] # use name as it host
                         if svr:
-                            if not svr.has_key("port"):
+                            if "port" not in svr:
                                 svr["port"] = "22"
-                            if not svr.has_key("user_name"):
+                            if "user_name" not in svr:
                                 svr["user_name"] = USER
                             server_list.append(svr)
                         
@@ -185,7 +185,7 @@ def read_server_file(server_file):
                         svr["user_name"] = USER
                         server_list.append(svr)
 
-    return server_list
+    return list(server_list)
 
 
 def load_servers():
@@ -280,18 +280,18 @@ def main():
                 print("  - %s host=%s port=%s user=%s" % (sv["name"], sv["host"], sv["port"], user_name))
 
         if tgroup:
-            if not grouped_servers.has_key(tgroup):
+            if tgroup not in grouped_servers:
                 return
             else:
                 print_servers_group(tgroup, grouped_servers)
         else:
-            for group, items in grouped_servers.iteritems():
+            for group, items in grouped_servers.items():
                 if group == "etc": # ditunda
                     continue
                 print_servers_group(group, grouped_servers)
                 
 
-            for group, sv in grouped_servers.iteritems():
+            for group, sv in grouped_servers.items():
                 if group == "etc":
                     print_servers_group(group, grouped_servers)
 

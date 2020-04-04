@@ -20,7 +20,7 @@ def ensure_home():
 
 def show_banner():
     print("")
-    print("TSSAH - v2.0.0")
+    print("TSSAH - v2.2.0")
     print("A painless ssh switcher")
     print("")
 

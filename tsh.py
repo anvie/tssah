@@ -20,7 +20,7 @@ def ensure_home():
 
 def show_banner():
     print("")
-    print("TSSAH - v2.2.0")
+    print("TSSAH - v2.3.0")
     print("A painless ssh switcher")
     print("")
 
@@ -74,7 +74,7 @@ def print_sorted_list(data, rows=0, columns=0, ljust=10):
         lines = {}
         for count, item in enumerate(sorted(data)):
             lines.setdefault(count % rows, []).append(item)
-        for key, value in sorted(lines.items()):
+        for _key, value in sorted(lines.items()):
             for item in value:
                 print(item.ljust(ljust)),
             print()
@@ -224,7 +224,7 @@ def ensure_installed():
     BIN = "/usr/local/bin/tsh"
     if not os.path.exists(BIN):
 
-        yn = raw_input("It's look like you are not installed this cool tool, do you want to install? [Y/n] ").strip()
+        yn = input("It's look like you are not installed this cool tool, do you want to install? [Y/n] ").strip()
         if yn.lower() in ["y", "yes", "ok", "yeah"]:
 
             print("Installing...")
@@ -285,7 +285,7 @@ def main():
             else:
                 print_servers_group(tgroup, grouped_servers)
         else:
-            for group, items in grouped_servers.items():
+            for group, _items in grouped_servers.items():
                 if group == "etc": # ditunda
                     continue
                 print_servers_group(group, grouped_servers)
@@ -303,7 +303,7 @@ def main():
 
     try:
 
-        sv = (a for a in servers if a["name"].lower() == name.lower()).next()
+        sv = next((a for a in servers if a["name"].lower() == name.lower()))
         print("Connecting %s..." % sv["name"])
 
         _user = USER
@@ -315,7 +315,7 @@ def main():
 
         add_opts = []
         
-        if sv.has_key("key"):
+        if "key" in sv:
             add_opts.append("-i " + sv["key"])
             
         os.system("ssh %s %s -p %s" % (target, " ".join(add_opts).strip(), sv["port"]))
